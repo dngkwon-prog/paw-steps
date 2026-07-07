@@ -3,75 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PawSteps - 오늘의 산책을 기록하세요</title>
+    <title>PawSteps — Swiss Minimalist</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- p5.js for generative background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
 </head>
 <body>
+    <!-- Generative Background Layer -->
+    <div id="canvas-parent"></div>
+
     <div class="app-container">
         <header>
             <div class="logo">
-                <span class="icon">🐾</span>
-                <h1>PawSteps</h1>
+                <h1>PawSteps<span>®</span></h1>
             </div>
             <nav>
-                <button id="add-walk-btn" class="btn-primary">+ 산책 기록</button>
+                <button id="add-walk-btn" class="btn-minimal">+ Record Moment</button>
             </nav>
         </header>
 
         <main>
             <section class="hero">
-                <h2>매일 같은 길, <br><span>매번 다른 순간.</span></h2>
-                <p>오늘 반려견과 함께 본 풍경, 느낀 감정을 기록하고 나누세요.</p>
+                <h2>SAME PATH,<br>DIFFERENT MOMENTS.</h2>
+                <p>Capture the subtle traces of your daily walk.</p>
             </section>
 
-            <section id="feed" class="feed-container">
+            <section id="feed" class="feed-grid">
                 <!-- Records will be injected here -->
-                <div class="loader">기록을 불러오는 중...</div>
+                <div class="loader">Loading...</div>
             </section>
         </main>
 
         <!-- Record Modal -->
         <div id="modal" class="modal hidden">
-            <div class="modal-content glass">
-                <h3>오늘의 산책 기록</h3>
+            <div class="modal-content minimalist-card">
+                <h3>NEW RECORD</h3>
                 <form id="walk-form">
-                    <div class="form-group">
-                        <label for="mood">오늘의 기분</label>
-                        <select id="mood" required>
-                            <option value="happy">행복함 😊</option>
-                            <option value="energetic">활기참 🐕</option>
-                            <option value="calm">평온함 🌿</option>
-                            <option value="curious">호기심 🧐</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>MOOD</label>
+                            <select id="mood" required>
+                                <option value="happy">HAPPY</option>
+                                <option value="energetic">ENERGETIC</option>
+                                <option value="calm">CALM</option>
+                                <option value="curious">CURIOUS</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>DIST (KM)</label>
+                            <input type="number" id="distance" step="0.1" placeholder="0.0" required>
+                        </div>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="distance">산책 거리 (km)</label>
-                        <input type="number" id="distance" step="0.1" placeholder="예: 2.5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>오늘의 특별한 순간 (태그)</label>
+                        <label>MOMENT TAGS</label>
                         <div id="tag-container" class="tag-selector">
-                            <button type="button" class="tag-chip" data-tag="킁킁">#킁킁 👃</button>
-                            <button type="button" class="tag-chip" data-tag="친구만남">#친구만남 🐕</button>
-                            <button type="button" class="tag-chip" data-tag="풍경">#풍경 🌅</button>
-                            <button type="button" class="tag-chip" data-tag="우다다">#우다다 💨</button>
-                            <button type="button" class="tag-chip" data-tag="간식">#간식 🍖</button>
+                            <button type="button" class="tag-chip" data-tag="SCENT">#SCENT</button>
+                            <button type="button" class="tag-chip" data-tag="FRIEND">#FRIEND</button>
+                            <button type="button" class="tag-chip" data-tag="VIEW">#VIEW</button>
+                            <button type="button" class="tag-chip" data-tag="RUN">#RUN</button>
+                            <button type="button" class="tag-chip" data-tag="SNACK">#SNACK</button>
                         </div>
                         <input type="hidden" id="selected-tags" value="">
                     </div>
+
                     <div class="form-group">
-                        <label for="note">기억하고 싶은 순간</label>
-                        <textarea id="note" placeholder="오늘 어떤 일이 있었나요? 태그와 함께 기록해보세요." required></textarea>
+                        <label>NOTE</label>
+                        <textarea id="note" placeholder="Write down the subtle moments..." required></textarea>
                     </div>
+
                     <div class="modal-actions">
-                        <button type="button" id="close-modal" class="btn-secondary">취소</button>
-                        <button type="submit" class="btn-primary">순간 저장하기</button>
+                        <button type="button" id="close-modal" class="btn-text">CANCEL</button>
+                        <button type="submit" class="btn-solid">SAVE MOMENT</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="sketch.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
