@@ -1,0 +1,34 @@
+{
+  "user": {
+    "id": "uuid",
+    "name": "string",
+    "profilePic": "url",
+    "dog": {
+      "name": "string",
+      "breed": "string",
+      "age": "number"
+    }
+  },
+  "walk": {
+    "id": "uuid",
+    "userId": "uuid",
+    "timestamp": "ISO8601",
+    "duration": "number (minutes)",
+    "distance": "number (km)",
+    "mood": "string (happy, calm, energetic, curious)",
+    "note": "string",
+    "location": {
+      "name": "string",
+      "coordinates": [lat, lng]
+    },
+    "images": ["url"],
+    "tags": ["string"]
+  },
+  "feed": {
+    "type": "array of walk",
+    "pagination": {
+      "nextCursor": "string",
+      "limit": 20
+    }
+  }
+}
