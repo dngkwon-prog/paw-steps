@@ -156,5 +156,27 @@ walkForm.addEventListener('submit', (e) => {
     walkForm.reset();
 });
 
+// Photo trace overlay (triggered by clicking a photo stamp in the sketch.js mouse trail)
+const photoOverlay = document.getElementById('photo-overlay');
+const overlayImg = document.getElementById('overlay-img');
+const overlayCaption = document.getElementById('overlay-caption');
+const closePhotoOverlay = document.getElementById('close-photo-overlay');
+
+window.openPhotoTrace = (photo) => {
+    overlayImg.src = photo.src;
+    overlayCaption.textContent = photo.caption;
+    photoOverlay.classList.remove('hidden');
+};
+
+closePhotoOverlay.addEventListener('click', () => {
+    photoOverlay.classList.add('hidden');
+});
+
+photoOverlay.addEventListener('click', (e) => {
+    if (e.target === photoOverlay) {
+        photoOverlay.classList.add('hidden');
+    }
+});
+
 // Init
 renderFeed();
