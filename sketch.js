@@ -8,78 +8,79 @@ let counter = 0;
 
 let bgColor;
 let targetBgColor;
-let colorLerpStep = 0.005; // Very slow transition
+let colorLerpStep = 0.005;
+
+let pg; // Graphics buffer for persistent traces
 
 function setup() {
     let canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('canvas-parent');
     
-    // Initial Swiss White/Gray colors
+    // Create an off-screen buffer to store the traces
+    pg = createGraphics(windowWidth, windowHeight);
+    pg.textFont(font);
+    pg.textAlign(LEFT);
+    
+    // Initial colors
     bgColor = color(250, 250, 250);
     targetBgColor = getRandomSwissColor();
     
-    background(bgColor);
     x = mouseX;
     y = mouseY;
-    
-    textFont(font);
-    textAlign(LEFT);
-    fill(0, 0, 0, 150); // Muted black
 }
 
 function draw() {
-    // Subtle background color transition ("아사무사하게")
+    // 1. Subtle background transition (always happens)
     bgColor = lerpColor(bgColor, targetBgColor, colorLerpStep);
     background(bgColor);
     
-    // Periodically change target color
     if (frameCount % 600 === 0) {
         targetBgColor = getRandomSwissColor();
     }
 
-    // Footprints logic from mySketch.js
-    if (mouseIsPressed) {
-        let d = dist(x, y, mouseX, mouseY);
-        textSize(fontSizeMin + d / 5);
-        let newLetter = letters.charAt(counter);
-        stepSize = textWidth(newLetter);
+    // 2. Draw the persistent traces from the buffer
+    image(pg, 0, 0);
 
-        if (d > stepSize) {
-            let angle = atan2(mouseY - y, mouseX - x);
+    // 3. Generate new traces on mouse movement (no click required)
+    let d = dist(x, y, mouseX, mouseY);
+    let newLetter = letters.charAt(counter);
+    let currentFontSize = fontSizeMin + d / 5;
+    pg.textSize(currentFontSize);
+    stepSize = pg.textWidth(newLetter);
 
-            push();
-            translate(x, y);
-            rotate(angle + random(angleDistortion));
-            fill(0, 0, 0, 100); // Faint footprint
-            text(newLetter, 0, 0);
-            pop();
+    if (d > stepSize) {
+        let angle = atan2(mouseY - y, mouseX - x);
 
-            counter++;
-            if (counter >= letters.length) counter = 0;
+        pg.push();
+        pg.translate(x, y);
+        pg.rotate(angle + random(angleDistortion));
+        
+        // Footprint color: Subtle black with low alpha for a "layered" look
+        pg.fill(0, 0, 0, 60); 
+        pg.text(newLetter, 0, 0);
+        pg.pop();
 
-            x = x + cos(angle) * stepSize;
-            y = y + sin(angle) * stepSize;
-        }
+        counter++;
+        if (counter >= letters.length) counter = 0;
+
+        x = x + cos(angle) * stepSize;
+        y = y + sin(angle) * stepSize;
     }
-}
-
-function mousePressed() {
-    x = mouseX;
-    y = mouseY;
 }
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
+    // Note: Resizing Graphics buffer would clear it, so we keep it or resize carefully
+    // For MVP, we just resize the main canvas
 }
 
 function getRandomSwissColor() {
-    // Light, subtle tones that fit Swiss Minimalism
     const colors = [
-        color(250, 250, 250), // White
-        color(245, 245, 245), // Off-white
-        color(240, 242, 245), // Cool gray
-        color(245, 242, 235), // Warm cream
-        color(235, 240, 235)  // Muted sage
+        color(250, 250, 250),
+        color(245, 245, 245),
+        color(242, 243, 245),
+        color(245, 243, 238),
+        color(238, 242, 238)
     ];
     return colors[Math.floor(random(colors.length))];
 }
