@@ -1,4 +1,5 @@
-let x, y;
+let x = 0;
+let y = 0;
 let stepSize = 5.0;
 let font = 'Outfit';
 let letters = ' PawSteps Walk Traces Subtle Moments Different Scent First Greeting Quiet Path ';
@@ -11,26 +12,32 @@ let targetBgColor;
 let colorLerpStep = 0.005;
 
 let pg; // Graphics buffer for persistent traces
+let isSetupDone = false;
 
 function setup() {
+    console.log("p5.js setup started");
     let canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('canvas-parent');
     
     // Create an off-screen buffer to store the traces
     pg = createGraphics(windowWidth, windowHeight);
-    pg.textFont(font);
     pg.textAlign(LEFT);
     
     // Initial colors
     bgColor = color(250, 250, 250);
-    targetBgColor = getRandomSwissColor();
+    targetBgColor = color(245, 245, 245);
     
     x = mouseX;
     y = mouseY;
+    
+    isSetupDone = true;
+    console.log("p5.js setup completed");
 }
 
 function draw() {
-    // 1. Subtle background transition (always happens)
+    if (!isSetupDone) return;
+
+    // 1. Subtle background transition
     bgColor = lerpColor(bgColor, targetBgColor, colorLerpStep);
     background(bgColor);
     
@@ -41,9 +48,16 @@ function draw() {
     // 2. Draw the persistent traces from the buffer
     image(pg, 0, 0);
 
-    // 3. Generate new traces on mouse movement (no click required)
+    // 3. Generate new traces on mouse movement
+    // Avoid drawing if mouse hasn't moved yet
+    if (mouseX === 0 && mouseY === 0) return;
+
     let d = dist(x, y, mouseX, mouseY);
     let newLetter = letters.charAt(counter);
+    
+    // Set font inside draw if pg exists
+    pg.textFont(font || 'Arial');
+    
     let currentFontSize = fontSizeMin + d / 5;
     pg.textSize(currentFontSize);
     stepSize = pg.textWidth(newLetter);
@@ -55,8 +69,9 @@ function draw() {
         pg.translate(x, y);
         pg.rotate(angle + random(angleDistortion));
         
-        // Footprint color: Subtle black with low alpha for a "layered" look
+        // Footprint color: Subtle black with low alpha
         pg.fill(0, 0, 0, 60); 
+        pg.noStroke();
         pg.text(newLetter, 0, 0);
         pg.pop();
 
@@ -70,17 +85,12 @@ function draw() {
 
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
-    // Note: Resizing Graphics buffer would clear it, so we keep it or resize carefully
-    // For MVP, we just resize the main canvas
 }
 
 function getRandomSwissColor() {
-    const colors = [
-        color(250, 250, 250),
-        color(245, 245, 245),
-        color(242, 243, 245),
-        color(245, 243, 238),
-        color(238, 242, 238)
-    ];
-    return colors[Math.floor(random(colors.length))];
+    // Light, subtle tones
+    const r = random(240, 255);
+    const g = random(240, 255);
+    const b = random(240, 255);
+    return color(r, g, b);
 }
